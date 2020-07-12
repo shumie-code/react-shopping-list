@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import withDataFetching from '../withDataFetching';
-import SubHeader from '../components/Header/SubHeader';
+import SubHeader from '../components/SubHeader/SubHeader';
 
 const ListWrapper = styled.div`
   display: flex;
@@ -33,24 +32,20 @@ const Alert = styled.span`
   text-align: center;
 `;
 
-const Lists = ({ data, loading, error, history }) =>
-  !loading && !error ? (
-    <>
-      {history && <SubHeader title='Your Lists' />}
-      <ListWrapper>
-        {data &&
-          [data].map(list => (
-            <ListLink key={list.id} to={`list/${list.id}`}>
-              <Title>{list.title}</Title>
-            </ListLink>
-          ))}
-      </ListWrapper>
-    </>
-  ) : (
-    <Alert>{loading ? 'Loading...' : error}</Alert>
-  );
+const Lists = ({lists, loading = false, error = false, match, history }) => (
+  <>
+  {history && <SubHeader title='Your Lists' openForm={() => history.push('/new')} /> }
+  <ListWrapper>
+    {( loading || error ) && <Alert>{loading ? 'Loading...' : error}</Alert>}
+    {lists && lists.map(list => (
+      <ListLink 
+      key={list.id}
+      to={`list/${list.id}`}>
+        <Title>{ list.title } </Title>
+      </ListLink>
+    ))}
+  </ListWrapper>
+  </>
+);
 
-export default withDataFetching({
-  dataSource:
-    'https://my-json-server.typicode.com/shumie-code/react-shopping-list/lists',
-})(Lists);
+export default Lists;
